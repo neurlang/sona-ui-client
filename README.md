@@ -27,11 +27,5 @@ CGO_ENABLED=1 GOOS=darwin go build
 ## windows
 
 ```
-CGO_ENABLED=1 GOOS=windows go build
-```
-
-but currently, needs fix:
-```
-# runtime/cgo
-gcc: error: unrecognized command-line option ‘-mthreads’; did you mean ‘-pthread’?
+export GOOS=windows; export GOARCH=amd64; export CGO_ENABLED=1; export CXX=x86_64-w64-mingw32-g++; export CC=x86_64-w64-mingw32-gcc ; go build
 ```
