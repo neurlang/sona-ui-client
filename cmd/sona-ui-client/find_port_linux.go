@@ -1,3 +1,6 @@
+//go:build linux
+// +build linux
+
 package main
 
 import (
@@ -17,8 +20,6 @@ func findPort(processName string) (string, error) {
 
 	scanner := bufio.NewScanner(strings.NewReader(string(out)))
 
-	// Example line:
-	// LISTEN 0 128 127.0.0.1:39421 ... users:(("sona",pid=1234,fd=3))
 	re := regexp.MustCompile(`(127\.0\.0\.1|\*):(\d+).*` + processName)
 
 	for scanner.Scan() {
@@ -30,13 +31,4 @@ func findPort(processName string) (string, error) {
 	}
 
 	return "", fmt.Errorf("port not found")
-}
-
-func init() {
-	port, err := findPort("sona")
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-	fmt.Println("Found port:", port)
 }
