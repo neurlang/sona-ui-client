@@ -127,7 +127,6 @@ func render(smoke *smoke, surface cairo.Surface) {
 				}
 			}
 
-
 			if dst8 != nil {
 				dst8[4*x+y*stride+0] = byte(c)
 				dst8[4*x+y*stride+1] = byte(c)
@@ -251,14 +250,21 @@ func (smoke *smoke) Motion(
 }
 
 func (smoke *smoke) Button(
-	_ *window.Widget,
-	_ *window.Input,
+	widget *window.Widget,
+	input *window.Input,
 	time uint32,
 	button uint32,
-	_ wl.PointerButtonState,
-	_ window.WidgetHandler,
+	state wl.PointerButtonState,
+	handler window.WidgetHandler,
 ) {
-	smoke.Enter(nil, nil, 0, 0)
+
+	if !smoke.transcribin.Load() {
+		if state == wl.PointerButtonStatePressed {
+			smoke.Leave(widget, input)
+		} else  {
+			smoke.Enter(widget, input, 0, 0)
+		}
+	}
 }
 
 func (*smoke) TouchUp(
