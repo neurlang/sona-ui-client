@@ -344,10 +344,19 @@ func main() {
 
 	// Define command line flags
 	host := flag.String("host", "127.0.0.1", "Host address for the API server")
-	port := flag.String("port", "36055", "Port number for the API server")
+	port := flag.String("port", "", "Port number for the API server")
 	filePath := flag.String("file", "", "Path to the WAV file")
 	once := flag.Bool("once", false, "Run once")
 	flag.Parse()
+
+	if port != nil && *port == "" {
+		sonaPort, err := findPort("sona")
+		if err != nil {
+			fmt.Println("Error finding sona port:", err)
+		} else {
+			*port = fmt.Sprint(sonaPort)
+		}
+	}
 
 	var smoke smoke
 
