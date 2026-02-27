@@ -20,12 +20,12 @@ func findPort(processName string) (string, error) {
 
 	scanner := bufio.NewScanner(strings.NewReader(string(out)))
 
-	re := regexp.MustCompile(`127\.0\.0\.1\.\d+\s+(\d+)\s+LISTEN\s+\S+\s+(\S+)`)
+	re := regexp.MustCompile(`(127\.0\.0\.1|\*)\.(\d)+\s+(\d+|\*\.\*)\s+LISTEN\s+\S+\s+(\S+)`)
 
 	for scanner.Scan() {
 		line := scanner.Text()
 		if matches := re.FindStringSubmatch(line); matches != nil {
-			port, procInfo := matches[1], matches[2]
+			port, procInfo := matches[2], matches[4]
 			if strings.Contains(procInfo, processName) {
 				return port, nil
 			}
