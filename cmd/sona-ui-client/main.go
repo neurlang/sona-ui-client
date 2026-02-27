@@ -261,7 +261,7 @@ func (smoke *smoke) Button(
 	if !smoke.transcribin.Load() {
 		if state == wl.PointerButtonStatePressed {
 			smoke.Leave(widget, input)
-		} else  {
+		} else {
 			smoke.Enter(widget, input, 0, 0)
 		}
 	}
@@ -372,7 +372,7 @@ func main() {
 	host := flag.String("host", "127.0.0.1", "Host address for the API server")
 	port := flag.String("port", "36055", "Port number for the API server")
 	filePath := flag.String("file", "", "Path to the WAV file")
-	forever := flag.Bool("forever", false, "Run forever")
+	once := flag.Bool("once", false, "Run once")
 	flag.Parse()
 
 	var smoke smoke
@@ -400,7 +400,7 @@ func main() {
 	smoke.fontSize = 16
 
 	go smoke.rs.Run("Click to record, press any key to transcribe. IPA is automatically copied.",
-		*host, *port, *filePath, *forever, smoke.start, smoke.stop, func() {
+		*host, *port, *filePath, !*once, smoke.start, smoke.stop, func() {
 			smoke.entered.Store(false)
 			smoke.transcribin.Store(true)
 		}, func(text string) {
