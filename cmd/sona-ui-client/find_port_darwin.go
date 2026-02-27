@@ -26,7 +26,10 @@ func findPort(processName string) (string, error) {
 		line := scanner.Text()
 		if matches := re.FindStringSubmatch(line); matches != nil {
 			port, procInfo := matches[2], matches[4]
-			if strings.Contains(procInfo, processName) {
+			pid := strings.Fields(procInfo)[1]
+			cmd := exec.Command("ps", "-p", pid, "-o", "comm=")
+			output, err := cmd.Output()
+			if err == nil && strings.TrimSpace(string(output)) == processName {
 				return port, nil
 			}
 		}
