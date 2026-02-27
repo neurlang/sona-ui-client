@@ -1,3 +1,6 @@
+//go:build linux
+// +build linux
+
 package main
 
 import "github.com/neurlang/wayland/wl"
@@ -42,4 +45,29 @@ func (c *Copy) HandleDataSourceDndFinished(_ wl.DataSourceDndFinishedEvent) {
 }
 func (c *Copy) HandleDataSourceSend(ev wl.DataSourceSendEvent) {
 	c.Receive(ev.Fd, ev.MimeType)
+}
+
+func (smoke *smoke) copyToClipboard(text string) {
+	if smoke.display == nil {
+		println("no display")
+		return
+	}
+	smoke.inputMut.Lock()
+	input := smoke.input
+	smoke.inputMut.Unlock()
+	if input == nil {
+		println("no input")
+		return
+	}
+
+	src, err := smoke.display.CreateDataSource()
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
+	src.Offer("UTF8_STRING")
+	src.Offer("text/plain;charset=utf-8")
+	src.AddListener(&Copy{Text: text})
+	input.DeviceSetSelection(src, smoke.display.GetSerial())
 }
