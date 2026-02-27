@@ -13,6 +13,7 @@ import (
 type Copy struct {
 	Text string
 	file *os.File
+	callback func()
 }
 
 func (c *Copy) Receive(fd uintptr, name string) error {
@@ -30,7 +31,11 @@ func (c *Copy) Write(buf []byte) (int, error) {
 }
 
 func (c *Copy) Close() error {
-	return c.file.Close()
+	err := c.file.Close()
+	if c.callback != nil {
+		c.callback()
+	}
+	return err
 }
 
 func (c *Copy) HandleDataSourceAction(_ wl.DataSourceActionEvent) {
@@ -47,7 +52,7 @@ func (c *Copy) HandleDataSourceSend(ev wl.DataSourceSendEvent) {
 	c.Receive(ev.Fd, ev.MimeType)
 }
 
-func (smoke *smoke) copyToClipboard(text string) {
+func (smoke *smoke) copyToClipboard(text string, callback func()) {
 	if smoke.display == nil {
 		println("no display")
 		return
@@ -68,6 +73,6 @@ func (smoke *smoke) copyToClipboard(text string) {
 
 	src.Offer("UTF8_STRING")
 	src.Offer("text/plain;charset=utf-8")
-	src.AddListener(&Copy{Text: text})
+	src.AddListener(&Copy{Text: text, callback: callback})
 	input.DeviceSetSelection(src, smoke.display.GetSerial())
 }

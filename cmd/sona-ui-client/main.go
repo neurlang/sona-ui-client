@@ -387,13 +387,28 @@ func main() {
 			smoke.entered.Store(false)
 			smoke.transcribin.Store(true)
 		}, func(text string) {
-			smoke.copyToClipboard(text)
+			smoke.copyToClipboard(text, func() {
+				if once != nil && *once {
+					go func() {
+						d.Exit()
+						os.Exit(0)
+					}()
+				}
+			})
 			smoke.transcribin.Store(false)
 		})
 
 	smoke.widget.SetUserDataWidgetHandler(&smoke)
 
 	smoke.widget.ScheduleResize(smoke.width, smoke.height)
+
+	if once != nil && *once {
+		go func() {
+			time.Sleep(time.Second)
+			smoke.entered.Store(true)
+			smoke.start <- struct{}{}
+		}()
+	}
 
 	window.DisplayRun(d)
 
