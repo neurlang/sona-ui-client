@@ -37,7 +37,15 @@ Then run this tool with the same port:
 go build
 ```
 
+### linux - ubuntu - hotkey start the app and transcribe once
 
+1. top right corner
+2. settings
+3. keyboard
+4. keyboard shortcuts
+5. custom shortcuts
+6. add new
+7. **name:** `sona` **command:** `/path/to/sona-ui-client --once` **shortcut:** set any key you like for sona
 
 ## macos
 
