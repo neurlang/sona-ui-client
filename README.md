@@ -1,13 +1,36 @@
 # sona-ui-client
 
+![L](sona.gif?raw=true)
+
+**Features:**
+
+- Start recording on click
+- End recording on click/keypress
+- Transcribe using local whisper model (to IPA or any Whisper-supported Language)
+- Automatically copy transcribed text to clipboard
+
 ## usage
 
-port is sona's random port number
+First install sona from [sona repo](https://github.com/thewh1teagle/sona).
+Run sona with:
 
 ```
-./sona-ui-client --port 34725 --forever
+./sona serve model.bin
+```
+It will print the port:
+
+```
+{"commit":"dev","port":41911,"status":"ready","version":"dev"}
+2026/02/27 20:37:24 listening on 0.0.0.0:41911
 ```
 
+Then run this tool with the same port:
+
+```
+./sona-ui-client --port 41911
+```
+
+# Installation
 ## linux
 
 ```
