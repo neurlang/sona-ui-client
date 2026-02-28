@@ -80,5 +80,5 @@ export GOOS=windows; export GOARCH=amd64; export CGO_ENABLED=1; export CXX=x86_6
 ### automatic hotkey setup
 
 ```
-./sona-ui-client --setup --hotkey CTRL+ALT+R
+./sona-ui-client.exe --setup --hotkey CTRL+ALT+R
 ```
