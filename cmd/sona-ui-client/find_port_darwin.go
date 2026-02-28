@@ -20,7 +20,7 @@ func findPort(processName string) (string, error) {
 
 	scanner := bufio.NewScanner(strings.NewReader(string(out)))
 
-	re := regexp.MustCompile(`(127\.0\.0\.1|\*)\.(\d)+\s+(\d+|\*\.\*)\s+LISTEN\s+\S+\s+(\S+)`)
+	re := regexp.MustCompile(`(127\.0\.0\.1|\*)\.(\d)+\s+(\d+|\*\.\*)\s+LISTEN\s+\d+\s+\d+\s+(\S+)`)
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -30,7 +30,7 @@ func findPort(processName string) (string, error) {
 			for _, f := range fields {
 				cmd := exec.Command("ps", "-p", f, "-o", "comm=")
 				output, err := cmd.Output()
-				if err == nil && strings.TrimSpace(string(output)) == processName {
+				if err == nil && strings.Contains(string(output), processName) {
 					return port, nil
 				}
 			}
