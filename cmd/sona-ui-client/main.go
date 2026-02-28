@@ -180,7 +180,7 @@ func (smoke *smoke) Key(
 	time uint32,
 	key uint32,
 	notUnicode uint32,
-	_ wl.KeyboardKeyState,
+	state wl.KeyboardKeyState,
 	_ window.WidgetHandler,
 ) {
 	println(notUnicode)
@@ -192,10 +192,11 @@ func (smoke *smoke) Key(
 	}
 
 	if notUnicode == xkb.KeyQ || notUnicode == xkb.KEYq {
-		smoke.free()
 		smoke.display.Exit()
 	} else {
-		smoke.Leave(nil, nil)
+		if state == wl.KeyboardKeyStateReleased {
+			smoke.Leave(nil, input)
+		}
 	}
 }
 func (smoke *smoke) Focus(_ *window.Window, input *window.Input) {
