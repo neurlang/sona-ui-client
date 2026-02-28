@@ -33,7 +33,6 @@ jobs:
       matrix:
         os:
           - linux
-          - windows
         arch:
           - amd64
     uses: slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml@v2.0.0
