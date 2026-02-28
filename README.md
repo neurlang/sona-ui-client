@@ -37,7 +37,13 @@ Then run this tool with the same port:
 go build
 ```
 
-### linux - ubuntu - hotkey start the app and transcribe once
+### automatic hotkey setup
+
+```
+./sona-ui-client --setup --hotkey <Ctrl><Alt>R
+```
+
+### manual hotkey setup
 
 1. top right corner
 2. settings
@@ -53,7 +59,9 @@ go build
 CGO_ENABLED=1 GOOS=darwin go build
 ```
 
+### automatic hotkey setup
 
+On macos automatic hotkey setup is unsupported. Patches to implement this welcome.
 
 ## windows
 
@@ -67,4 +75,10 @@ Then build:
 
 ```bash
 export GOOS=windows; export GOARCH=amd64; export CGO_ENABLED=1; export CXX=x86_64-w64-mingw32-g++; export CC=x86_64-w64-mingw32-gcc ; go build
+```
+
+### automatic hotkey setup
+
+```
+./sona-ui-client --setup --hotkey CTRL+ALT+R
 ```
