@@ -15,7 +15,7 @@ goos: linux
 goarch: amd64
 
 # Entrypoint to compile.
-main: ./cmd/sona-ui-client/main.go
+main: ./cmd/sona-ui-client/
 
 # Binary output name.
 # {{ .Os }} will be replaced by goos field in the config file.
