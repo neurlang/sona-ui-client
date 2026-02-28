@@ -229,6 +229,7 @@ func (smoke *smoke) Leave(_ *window.Widget, input *window.Input) {
 	}
 
 	if smoke.entered.Load() {
+		smoke.entered.Store(false)
 		smoke.stop <- struct{}{}
 	}
 
