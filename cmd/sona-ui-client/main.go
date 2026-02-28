@@ -347,9 +347,20 @@ func main() {
 	// Define command line flags
 	host := flag.String("host", "127.0.0.1", "Host address for the API server")
 	port := flag.String("port", "", "Port number for the API server")
+	setup := flag.Bool("setup", false, "Setup Hotkey")
+	hotkey := flag.String("hotkey", "<Ctrl><Alt>R", "Hotkey to setup")
 	filePath := flag.String("file", "", "Path to the WAV file")
 	once := flag.Bool("once", false, "Run once")
 	flag.Parse()
+
+	if setup != nil && *setup {
+		err := SetupHotkey(*hotkey)
+		if err != nil {
+			*hotkey = err.Error()
+		} else {
+			*hotkey = "Hotkey " + *hotkey + " setup sucessfully. "
+		}
+	}
 
 	if port != nil && *port == "" {
 		sonaPort, err := findPort("sona")
@@ -384,7 +395,13 @@ func main() {
 	smoke.start, smoke.stop = make(chan struct{}, 0), make(chan struct{}, 0)
 	smoke.fontSize = 16
 
-	go smoke.rs.Run("Click to record, press any key to transcribe. IPA is automatically copied.",
+	var str = "Click to record, press any key to transcribe. IPA is automatically copied."
+
+	if setup != nil && *setup {
+		str = *hotkey + str
+	}
+
+	go smoke.rs.Run(str,
 		*host, *port, *filePath, !*once, smoke.start, smoke.stop, func() {
 			smoke.entered.Store(false)
 			smoke.transcribin.Store(true)
