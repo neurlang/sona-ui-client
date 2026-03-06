@@ -59,6 +59,7 @@ func (smoke *smoke) copyToClipboard(text string, callback func()) {
 	}
 	smoke.inputMut.Lock()
 	input := smoke.input
+	serial := smoke.serial
 	smoke.inputMut.Unlock()
 	if input == nil {
 		println("no input")
@@ -71,8 +72,12 @@ func (smoke *smoke) copyToClipboard(text string, callback func()) {
 		return
 	}
 
+	if serial == 0 {
+		serial = smoke.display.GetSerial()
+	}
+
 	src.Offer("UTF8_STRING")
 	src.Offer("text/plain;charset=utf-8")
 	src.AddListener(&Copy{Text: text, callback: callback})
-	input.DeviceSetSelection(src, smoke.display.GetSerial())
+	input.DeviceSetSelection(src, serial)
 }

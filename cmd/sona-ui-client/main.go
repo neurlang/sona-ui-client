@@ -53,6 +53,7 @@ type smoke struct {
 	transcribin atomic.Bool
 	fontSize    byte
 	input       *window.Input
+	serial      uint32
 	inputMut    sync.Mutex
 }
 
@@ -189,6 +190,7 @@ func (smoke *smoke) Key(
 	if input != nil {
 		smoke.inputMut.Lock()
 		smoke.input = input
+		smoke.serial = smoke.display.GetSerial()
 		smoke.inputMut.Unlock()
 	}
 
@@ -196,7 +198,7 @@ func (smoke *smoke) Key(
 		smoke.display.Exit()
 	} else {
 		if state == wl.KeyboardKeyStateReleased {
-			smoke.Leave(nil, input)
+			smoke.leave(nil, input)
 		}
 	}
 }
@@ -204,14 +206,18 @@ func (smoke *smoke) Focus(_ *window.Window, input *window.Input) {
 	if input != nil {
 		smoke.inputMut.Lock()
 		smoke.input = input
+		smoke.serial = smoke.display.GetSerial()
 		smoke.inputMut.Unlock()
 	}
 }
 func (smoke *smoke) Enter(_ *window.Widget, input *window.Input, x float32, y float32) {
+}
 
+func (smoke *smoke) enter(_ *window.Widget, input *window.Input, x float32, y float32) {
 	if input != nil {
 		smoke.inputMut.Lock()
 		smoke.input = input
+		smoke.serial = smoke.display.GetSerial()
 		smoke.inputMut.Unlock()
 	}
 
@@ -222,10 +228,13 @@ func (smoke *smoke) Enter(_ *window.Widget, input *window.Input, x float32, y fl
 
 }
 func (smoke *smoke) Leave(_ *window.Widget, input *window.Input) {
+}
 
+func (smoke *smoke) leave(_ *window.Widget, input *window.Input) {
 	if input != nil {
 		smoke.inputMut.Lock()
 		smoke.input = input
+		smoke.serial = smoke.display.GetSerial()
 		smoke.inputMut.Unlock()
 	}
 
@@ -246,6 +255,7 @@ func (smoke *smoke) Motion(
 	if input != nil {
 		smoke.inputMut.Lock()
 		smoke.input = input
+		smoke.serial = smoke.display.GetSerial()
 		smoke.inputMut.Unlock()
 	}
 	return window.CursorHand1
@@ -262,10 +272,17 @@ func (smoke *smoke) Button(
 
 	if !smoke.transcribin.Load() {
 		if state == wl.PointerButtonStatePressed {
-			smoke.Leave(widget, input)
+			smoke.leave(widget, input)
 		} else {
-			smoke.Enter(widget, input, 0, 0)
+			smoke.enter(widget, input, 0, 0)
 		}
+	}
+
+	if input != nil {
+		smoke.inputMut.Lock()
+		smoke.input = input
+		smoke.serial = smoke.display.GetSerial()
+		smoke.inputMut.Unlock()
 	}
 }
 
@@ -314,6 +331,7 @@ func (smoke *smoke) Axis(
 	if input != nil {
 		smoke.inputMut.Lock()
 		smoke.input = input
+		smoke.serial = smoke.display.GetSerial()
 		smoke.inputMut.Unlock()
 	}
 	if value < 0 {
