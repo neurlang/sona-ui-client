@@ -192,7 +192,7 @@ func saveAsWAV(filename string, samples []int, sampleRate int) error {
 	return encoder.Write(audioBuf)
 }
 
-func (r *RecordedSamples) Run(helptext, host, port string, filePath string, forever bool, start, stop chan struct{}, hangup func(), textCallback func(string)) {
+func (r *RecordedSamples) Run(helptext, host, port string, filePath string, forever bool, start, stop chan struct{}, hangup func(), textCallback func(string), params map[string]string) {
 
 	r.mut.Lock()
 	r.capturedText = helptext
@@ -252,6 +252,17 @@ again:
 		if err != nil {
 			fmt.Printf("Error copying file content: %v\n", err)
 			return
+		}
+
+		for k, v := range params {
+			println(k, v)
+			w, err := multipartWriter.CreateFormField(k)
+			if err != nil {
+				fmt.Printf("Error adding parameter: %v\n", err)
+			}
+			if err == nil {
+				w.Write([]byte(v))
+			}
 		}
 
 		// Close the multipart writer to set the terminating boundary

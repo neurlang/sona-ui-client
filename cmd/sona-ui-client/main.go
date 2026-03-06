@@ -22,6 +22,7 @@
 package main
 
 import "time"
+import "strings"
 import "math/rand"
 import "os"
 import (
@@ -342,8 +343,19 @@ func (smoke *smoke) free() {
 	smoke.rs = nil
 }
 
-func main() {
+type paramFlags []string
 
+func (paramFlags *paramFlags) String() string {
+	return ""
+}
+
+func (paramFlags *paramFlags) Set(value string) error {
+	*paramFlags = append(*paramFlags, strings.TrimSpace(value))
+	return nil
+}
+
+func main() {
+	var parameters paramFlags
 	// Define command line flags
 	host := flag.String("host", "127.0.0.1", "Host address for the API server")
 	port := flag.String("port", "", "Port number for the API server")
@@ -351,7 +363,18 @@ func main() {
 	hotkey := flag.String("hotkey", "<Ctrl><Alt>R", "Hotkey to setup")
 	filePath := flag.String("file", "", "Path to the WAV file")
 	once := flag.Bool("once", false, "Run once")
+	flag.Var(&parameters, "param", "Parameters for sona -param key=val")
 	flag.Parse()
+
+	var params = make(map[string]string)
+	for _, p := range parameters {
+		for i := range p {
+			if p[i] == '=' {
+				params[p[:i]] = p[i+1:]
+				break
+			}
+		}
+	}
 
 	if setup != nil && *setup {
 		err := SetupHotkey(*hotkey)
@@ -415,7 +438,7 @@ func main() {
 				}
 			})
 			smoke.transcribin.Store(false)
-		})
+		}, params)
 
 	smoke.widget.SetUserDataWidgetHandler(&smoke)
 
