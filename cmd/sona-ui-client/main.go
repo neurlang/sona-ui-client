@@ -449,10 +449,8 @@ func main() {
 		}, func(text string) {
 			smoke.copyToClipboard(text, func() {
 				if once != nil && *once {
-					go func() {
-						d.Exit()
-						os.Exit(0)
-					}()
+					d.Exit()
+					os.Exit(0)
 				}
 			})
 			smoke.transcribin.Store(false)
